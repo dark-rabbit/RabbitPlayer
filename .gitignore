@@ -1,0 +1,19 @@
+# Ignore everything
+*
+
+# But not
+!.gitignore
+!README.md
+!package.json
+
+!src
+!src/index.html
+
+!src/css
+!src/css/style.css
+
+!src/js
+!src/js/app.js
+!src/js/init.js
+
+# !*/

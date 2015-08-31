@@ -1,0 +1,183 @@
+/* style global */
+html, body {
+	overflow: hidden;
+}
+@font-face {
+    font-family: ubuntu;
+    src: url(../fonts/Ubuntu-R.ttf);
+}
+body {
+    font-family: ubuntu;
+} 
+body {
+	background: #2d2d2d;
+	color: #cccccc;
+	-webkit-user-select: none;
+	cursor: default;
+}
+svg {
+	fill: #cccccc;
+}
+
+/* classes utiles */
+.clickable:hover {
+	color: #66cccc;
+}
+.clickable:hover > svg {
+	fill: #66cccc;
+}
+.scrollable {	
+	overflow: scroll;
+	overflow-x: hidden;
+}
+.backlight {
+	background-color: #393939;
+}
+.playing {
+	background-color: #f99157;
+	color: #2d2d2d;
+}
+.playing:hover {
+	background-color: #66cccc;
+	color: #2d2d2d;
+}
+
+/* explorateur de fichiers */
+#file-explorer {
+	position: absolute;
+	width: 40%;
+}
+#file-bar {
+	/* width: 100%; */
+	line-height: 24px;
+}
+#file-bar > div {
+	display: inline-block;
+	text-align: center;
+	line-height: 24px;
+	height: 24px;
+	padding-top: 1%;
+	padding-bottom: 1%;
+}
+#file-bar > div > svg {
+	vertical-align: -5px;
+}
+#nav-back {
+	width: 10%;
+}
+#nav-back > svg {
+	fill: #cc99cc;
+}
+#nav-back:hover {
+	background-color: #cc99cc;
+}
+#nav-back:hover > svg {
+	fill: #2d2d2d;
+}
+#album-info {
+	background-color: #6699cc;
+	color: #2d2d2d;
+	width: 80%;
+}
+#ablum-info > svg {
+	fill: #2d2d2d;
+}
+#play-album {
+	width: 10%;
+}
+#play-album > svg {
+	fill: #66cccc;
+}
+#play-album:hover {
+	background-color: #66cccc;
+}
+#play-album:hover > svg {
+	fill: #2d2d2d;
+}
+.files {
+	line-height: 20px;
+	padding-top: 1%;
+	padding-bottom: 1%;
+	padding-left: 4%;
+}
+.files > svg {
+	vertical-align: -3px;
+	margin-right: 2%;
+}
+
+/* lyrics */
+#lyrics {
+	position: absolute;
+	left: 40%;
+	width: 60%;
+	text-align: center;
+}
+#lyrics > div {
+	padding-top: 2%;
+	padding-bottom: 2%;
+}
+
+/* player */
+#player {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	height: 58px;
+}
+/* elements du player */
+/* boutons */
+.player-btn {
+	float: left;
+	width: 48px;
+	height: 48px;
+	line-height: 48px;
+	text-align: center;
+}
+.player-btn > svg {
+	vertical-align: middle;
+}
+/* bar de progression */
+#prog-bar {
+	width: 100%;
+	height: 10px;
+	background-color: #515151;
+}
+#prog-lvl {
+	width: 0%;
+	height: 100%;
+	background-color: #6699cc;
+}
+/* bar de volume */
+.muted {
+	fill: #f2777a;
+}
+#vol {
+	float: right;
+	width: 48px;
+	line-height: 48px;
+	text-align: center;
+}
+#vol-bar {
+	margin-top: -96px;
+	height: 96px;
+	margin-left: 12px;
+	width: 24px;
+	background: linear-gradient(to bottom, #f99157, #99cc99);
+}
+#vol-lvl {
+	background-color: #999999;
+	height: 100%;
+}
+
+/* scrollbar style */
+::-webkit-scrollbar {
+	background-color: #393939;
+}
+::-webkit-scrollbar-thumb {
+	background-color: #515151;
+}
+::-webkit-scrollbar-thumb:hover {
+}
+::-webkit-scrollbar-thumb:active {
+	background-color: #999999;
+} 
