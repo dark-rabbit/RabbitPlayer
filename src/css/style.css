@@ -2,9 +2,22 @@
 html, body {
 	overflow: hidden;
 }
+/* normalize input */
+input, input:hover, input:focus, input:active {
+	border: none;
+	outline: none;
+	background: #2d2d2d;
+	color: #cccccc;
+}
 @font-face {
     font-family: ubuntu;
     src: url(../fonts/Ubuntu-R.ttf);
+}
+@font-face {
+	font-family: 'Material Icons';
+	font-style: normal;
+	font-weight: 400;
+	src: url(../fonts/MaterialIcons-Regular.ttf);
 }
 body {
     font-family: ubuntu;
@@ -15,16 +28,36 @@ body {
 	-webkit-user-select: none;
 	cursor: default;
 }
-svg {
-	fill: #cccccc;
-}
 
 /* classes utiles */
+.material-icons {
+	font-family: 'Material Icons';
+	font-weight: normal;
+	font-style: normal;
+	font-size: 24px;  /* Preferred icon size */
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	line-height: 1;
+	text-transform: none;
+	letter-spacing: normal;
+	word-wrap: normal;
+
+	/* Support for all WebKit browsers. */
+	-webkit-font-smoothing: antialiased;
+	/* Support for Safari and Chrome. */
+	text-rendering: optimizeLegibility;
+
+	/* Support for Firefox. */
+	-moz-osx-font-smoothing: grayscale;
+}
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
 .clickable:hover {
 	color: #66cccc;
-}
-.clickable:hover > svg {
-	fill: #66cccc;
 }
 .scrollable {	
 	overflow: scroll;
@@ -51,48 +84,47 @@ svg {
 	/* width: 100%; */
 	line-height: 24px;
 }
-#file-bar > div {
+#file-bar > div, #file-bar > input {
 	display: inline-block;
+	vertical-align: top;
 	text-align: center;
 	line-height: 24px;
 	height: 24px;
 	padding-top: 1%;
 	padding-bottom: 1%;
 }
-#file-bar > div > svg {
+#file-bar > div > i {
 	vertical-align: -5px;
 }
 #nav-back {
 	width: 10%;
-}
-#nav-back > svg {
-	fill: #cc99cc;
+	color: #cc99cc;
 }
 #nav-back:hover {
 	background-color: #cc99cc;
-}
-#nav-back:hover > svg {
-	fill: #2d2d2d;
+	color: #2d2d2d;
 }
 #album-info {
-	background-color: #6699cc;
-	color: #2d2d2d;
 	width: 80%;
 }
-#ablum-info > svg {
-	fill: #2d2d2d;
+#album-info {
+	background-color: #2d2d2d;
+	color: #6699cc;
+}
+#album-info::-webkit-input-placeholder {
+	color: #6699cc;
+}
+#album-info:focus {
+	background-color: #6699cc;
+	color: #2d2d2d;
 }
 #play-album {
 	width: 10%;
-}
-#play-album > svg {
-	fill: #66cccc;
+	color: #66cccc;
 }
 #play-album:hover {
 	background-color: #66cccc;
-}
-#play-album:hover > svg {
-	fill: #2d2d2d;
+	color: #2d2d2d;
 }
 .files {
 	line-height: 20px;
@@ -100,8 +132,8 @@ svg {
 	padding-bottom: 1%;
 	padding-left: 4%;
 }
-.files > svg {
-	vertical-align: -3px;
+.files > i {
+	vertical-align: middle;
 	margin-right: 2%;
 }
 
@@ -133,7 +165,7 @@ svg {
 	line-height: 48px;
 	text-align: center;
 }
-.player-btn > svg {
+.player-btn > i {
 	vertical-align: middle;
 }
 /* bar de progression */
@@ -149,7 +181,7 @@ svg {
 }
 /* bar de volume */
 .muted {
-	fill: #f2777a;
+	color: #f2777a;
 }
 #vol {
 	float: right;

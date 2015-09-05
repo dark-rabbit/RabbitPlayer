@@ -68,12 +68,28 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	};
 
 	// vol bar click
-	$scope.volTo = function (e) {
+	$scope.volTo = function (event) {
 
 		$scope.mute (false);
+		var volBar = document.getElementById('vol-bar');
+		volBar.addEventListener ('mousemove', refreshVol);
+
+	};
+	document.addEventListener ('mouseup', function (e) {
+		var volBar = document.getElementById('vol-bar');
+		volBar.removeEventListener ('mousemove', refreshVol);
+		$scope.isVolumeChanging = false;
+	});
+
+	function refreshVol (e) {
 
 		var volBar = document.getElementById('vol-bar');
 		var volLvl = document.getElementById('vol-lvl');
+
+		e.preventDefault();
+
+		// stop refreshing volume
+		$scope.isVolumeChanging = true;
 
 		var tmpVol =
 			Math.floor ((1 - e.offsetY / volBar.offsetHeight) * 100);
@@ -84,36 +100,10 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 
 		// vlc refresh
 		vlc.audio.volume = tmpVol;
+	}
 
-		// volBar.addEventListener ('mousemove', function (e) {
-		//
-		// 	e.preventDefault();
-		//
-		// 	// stop refreshing volume
-		// 	$scope.isVolumeChanging = true;
-		//
-		// 	var tmpVol =
-		// 		Math.floor ((1 - e.offsetY / volBar.offsetHeight) * 100);
-		//
-		// 	// ui refresh
-		// 	volLvl.style.height =
-		// 		"" + (100 - tmpVol) + "%";
-		//
-		// 	// vlc refresh
-		// 	vlc.audio.volume = tmpVol;
-		// });
-		//
-		// // remove the listener if mouse up
-		// volBar.addEventListener ('mouseup', function (e) {
-		//
-		// 	e.preventDefault();
-		// 	volBar.removeEventListener ('mousemove');
-		// 	$scope.isVolumeChanging = false;
-		// });
-	};
-	// $scope.isVolumeChanging = false;
-	// mute
-	//
+	$scope.isVolumeChanging = false;
+
 	$scope.mute = function (bool) {
 		$scope.isMuted = bool;
 		vlc.audio.mute = bool;
@@ -146,6 +136,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	$scope.library = {};
 	$scope.files = [];
 	$scope.playingAlbum = "";
+	$scope.searchPattern = "";
 
 	// play album
 	$scope.playAlbum = function () {
