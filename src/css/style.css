@@ -6,6 +6,8 @@ html, body {
 input, input:hover, input:focus, input:active {
 	border: none;
 	outline: none;
+	margin: 0px;
+	padding: 0px;
 	background: #2d2d2d;
 	color: #cccccc;
 }
@@ -81,12 +83,10 @@ body {
 	width: 40%;
 }
 #file-bar {
-	/* width: 100%; */
-	line-height: 24px;
 }
 #file-bar > div, #file-bar > input {
 	display: inline-block;
-	vertical-align: top;
+	vertical-align: bottom;
 	text-align: center;
 	line-height: 24px;
 	height: 24px;
@@ -96,12 +96,20 @@ body {
 #file-bar > div > i {
 	vertical-align: -5px;
 }
+#refresh-lib {
+	width: 10%;
+	color: #6699cc;
+}
+#refresh-lib:hover {
+	background-color: #6699cc;
+	color: #2d2d2d;
+}
 #nav-back {
 	width: 10%;
-	color: #cc99cc;
+	color: #6699cc;
 }
 #nav-back:hover {
-	background-color: #cc99cc;
+	background-color: #6699cc;
 	color: #2d2d2d;
 }
 #album-info {
@@ -109,21 +117,29 @@ body {
 }
 #album-info {
 	background-color: #2d2d2d;
-	color: #6699cc;
+	color: #99cc99;
 }
 #album-info::-webkit-input-placeholder {
-	color: #6699cc;
+	color: #99cc99;
 }
 #album-info:focus {
-	background-color: #6699cc;
+	background-color: #99cc99;
+	color: #2d2d2d;
+}
+#clear-search {
+	width: 10%;
+	color: #f2777a;
+}
+#clear-search:hover {
+	background-color: #f2777a;
 	color: #2d2d2d;
 }
 #play-album {
 	width: 10%;
-	color: #66cccc;
+	color: #f99157;
 }
 #play-album:hover {
-	background-color: #66cccc;
+	background-color: #f99157;
 	color: #2d2d2d;
 }
 .files {

@@ -38,23 +38,6 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 		$scope.isPlaying = true;
 	};
 
-	// status bars refresh
-	$interval (function () {
-
-		if ($scope.isPlaying) {
-
-			// prog bar
-			document.getElementById('prog-lvl').style.width =
-				"" + (100 * vlc.input.position) + "%";
-
-			// vol bar
-			if ($scope.isVolumeChanging) {
-				document.getElementById('vol-lvl').style.height =
-					"" + (100 - vlc.audio.volume / 2) + "%";
-			}
-		}
-	}, 1000);
-
 	// prog bar click
 	$scope.goTo = function (event) {
 
@@ -66,6 +49,24 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 		document.getElementById('prog-lvl').style.width =
 			"" + (100 * vlc.input.position) + "%";
 	};
+
+	// status bars refresh
+	$interval (function () {
+
+		if ($scope.isPlaying) {
+
+			// prog bar
+			document.getElementById('prog-lvl').style.width =
+				"" + (100 * vlc.input.position) + "%";
+
+			// vol bar
+			if (!$scope.isVolumeChanging) {
+				document.getElementById('vol-lvl').style.height =
+					"" + (100 - vlc.audio.volume) + "%";
+			}
+		}
+	}, 1000);
+
 
 	// vol bar click
 	$scope.volTo = function (event) {
@@ -133,7 +134,6 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	//
 
 	// files array
-	$scope.library = {};
 	$scope.files = [];
 	$scope.playingAlbum = "";
 	$scope.searchPattern = "";
@@ -141,31 +141,23 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	// play album
 	$scope.playAlbum = function () {
 
-		if ($scope.isPlaying) {
+		if ($scope.isPlaying || $scope.playingAlbum === $scope.files[$scope.files.length - 1].path) {
 
 			$scope.togglePause ();
 
 		} else {
 
-			if ($scope.playingAlbum === $scope.files[$scope.files.length - 1].path) {
+			$scope.playingAlbum = $scope.files[$scope.files.length - 1].path;
 
-				vlc.playlist.playItem (0);
+			vlc.playlist.clear ();
+			angular.forEach ($scope.files[$scope.files.length - 1].subs, function (file) {
 
-			} else {
+				if (!file.isDir) {
 
-				$scope.playingAlbum = $scope.files[$scope.files.length - 1].path;
-
-				vlc.playlist.clear ();
-				angular.forEach ($scope.files[$scope.files.length - 1].subs, function (file) {
-
-					if (!file.isDir) {
-
-						vlc.playlist.add ('file://' + file.path);
-					}
-				});
-				vlc.playlist.play ();
-			}
-
+					vlc.playlist.add ('file://' + file.path);
+				}
+			});
+			vlc.playlist.play ();
 			$scope.isPlaying = true;
 		}
 	};
@@ -177,6 +169,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 
 			$scope.files.push (file);
 			document.getElementById('files').scrollTop = 0;
+			$scope.searchPattern = "";
 
 		} else {
 
@@ -229,7 +222,6 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	// check if file is open
 	$scope.isOpen = function (file, index) {
 
-
 		return (
 			$scope.playingAlbum === $scope.files[$scope.files.length - 1].path &&
 				!file.isDir &&
@@ -246,90 +238,20 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 		}
 	};
 
-	// library scan
-	$scope.scanLib = function (musicPath, callback) {
-
-		// file object prototype
-		var result = {
-			path: musicPath,
-			name: path.basename (musicPath),
-			isDir: true,
-			isAlbum: false,
-			subs: []
-		};
-
-		// read current dir
-		fs.readdir (musicPath, function (err, files) {
-
-			if (err) {
-
-				console.error (err);
-
-			} else {
-
-				// indicate if it's over
-				var pending = files.length;
-
-				angular.forEach (files, function (file) {
-
-					fs.lstat (path.join (musicPath, file), function (err, stats) {
-
-						// directory case : recursive callback
-						if (stats.isDirectory ()) {
-
-							$scope.scanLib (path.join (musicPath, file), function (res) {
-
-								// add only is contains something
-								if (res.subs.length > 0) {
-
-									result.subs.push (res);
-								}
-								pending--;
-								if (!pending) {
-									result.subs.sort (function (a, b) {
-										return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-									});
-									return callback (result);
-								}
-							});
-
-						} else {
-							// no dir case
-
-							var tmpExt = path.extname (file);
-
-							// check if vlc can read it
-							if (isReadable (tmpExt)) {
-								result.subs.push (
-									{
-										path: path.join (musicPath, file),
-										name: file.slice (0, - tmpExt.length),
-										isDir: false,
-										isAlbum: false
-									}
-								);
-								result.isAlbum = true;
-							}
-							pending--;
-							if (!pending) {
-								result.subs.sort (function (a, b) {
-									return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-								});
-								return callback (result);
-							}
-						}
-					});
-				});
-			}
-		});
-	};
 
 	// initial read
-	$scope.scanLib ('/home/lapin/Data/Music/Local', function (result) {
+	$scope.loadingFiles = true;
+	$scope.refreshLib = function () {
 
-		$scope.library = result;
-		$scope.files.push (result);
-	});
+		$scope.loadingFiles = true;
+		scanLib ('/home/lapin/Data/Music/Local', function (result) {
+
+			$scope.files = [];
+			$scope.files.push (result);
+			$scope.loadingFiles = false;
+		});
+	};
+	$scope.refreshLib();
 }]);
 
 
