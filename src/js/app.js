@@ -215,6 +215,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 						document.getElementById('lyrics').scrollTop = 0;
 					});
 				});
+
 			}
 		}
 	};
