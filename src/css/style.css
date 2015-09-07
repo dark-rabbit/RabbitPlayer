@@ -23,14 +23,16 @@ input, input:hover, input:focus, input:active {
 }
 body {
     font-family: ubuntu;
-} 
-body {
 	background: #2d2d2d;
 	color: #cccccc;
 	-webkit-user-select: none;
 	cursor: default;
 }
-
+::selection {
+	color: #2d2d2d;
+	background: none;
+	background-color: #66cccc;
+}
 /* classes utiles */
 .material-icons {
 	font-family: 'Material Icons';
@@ -161,6 +163,8 @@ body {
 	left: 40%;
 	width: 60%;
 	text-align: center;
+	cursor: text;
+	-webkit-user-select: text;
 }
 #lyrics > div {
 	padding-top: 2%;

@@ -180,8 +180,16 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 
 			} else  {
 
+				// open from search
+				if ($scope.searchPattern.length) {
+
+					vlc.playlist.clear ();
+					vlc.playlist.add ('file://' + file.path);
+					vlc.playlist.play ();
+					$scope.isPlaying = true;
+
 				// album is already opened
-				if ($scope.playingAlbum === $scope.files[$scope.files.length - 1].path) {
+				} else if ($scope.playingAlbum === $scope.files[$scope.files.length - 1].path) {
 
 					vlc.playlist.playItem (index);
 					$scope.isPlaying = true;
