@@ -28,13 +28,13 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	$scope.prev = function () {
 
 		vlc.playlist.prev ();
-		document.getElementById('prog-lvl').style.width = "0%";
+		// document.getElementById('prog-lvl').style.width = "0%";
 		$scope.isPlaying = true;
 	};
 	$scope.next = function () {
 
 		vlc.playlist.next ();
-		document.getElementById('prog-lvl').style.width = "0%";
+		// document.getElementById('prog-lvl').style.width = "0%";
 		$scope.isPlaying = true;
 	};
 
