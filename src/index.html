@@ -55,32 +55,27 @@
 			<div id="files" ng-hide="loadingFiles" class="scrollable">
 
 				<div
-					ng-repeat="file in files[files.length - 1].subs | filter:searchPattern as filteredFiles track by $index"
-					class="clickable files"
-					ng-click="selectFile(file, $index)"
-					ng-class="{backlight: $index % 2 === 0, playing: isOpen(file, $index)}">
+					ng-repeat="file in filteredFiles = (files[files.length - 1].subs | filter:searchPattern) track by $index"
+					ng-class="{backlight: $index % 2 === 0}"
+					ng-include="'sub_results.html'">
+				</div>
 
-					<i ng-show="file.isDir && !file.isAlbum" class="material-icons md-18">folder</i>
-					<i ng-show="file.isAlbum" class="material-icons md-18">album</i>
-
-					{{file.name}}
-
+				<script type="text/ng-template" id="sub_results.html">
 					<div
-						ng-if="searchPattern.length && filteredFiles.length < 10"
-						ng-repeat="file in file.subs | filter:searchPattern track by $index"
+						ng-click="selectFile(file, $index)"
+						ng-class="{playing: isOpen(file, $index)}"
+						class="clickable files">
+
+						<i ng-show="file.isDir && !file.isAlbum" class="material-icons md-18">folder</i>
+						<i ng-show="file.isAlbum" class="material-icons md-18">album</i>
+ 						{{file.name}}
+					</div>
+					<div
+						ng-if="searchPattern.length > 2 && filteredFiles.length < 10"
+						ng-repeat="file in filteredFiles = (file.subs | filter:searchPattern) track by $index"
 						ng-include="'sub_results.html'">
 					</div>
-
-					<script type="text/ng-template" id="sub_results.html">
-						
- 						{{file.name}}
-						<div
-							ng-repeat="file in file.subs | filter:searchPattern track by $index"
-							ng-include="'sub_results.html'">
-						</div>
-						
-					</script>
-				</div>
+				</script>
 
 			</div>
 
