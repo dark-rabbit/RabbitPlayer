@@ -43,7 +43,7 @@
 				</div>
 				
 				<!-- play album -->
-				<div id="play-album" ng-show="!searchPattern.length && files[files.length - 1].isAlbum" ng-click="playAlbum()">
+				<div id="play-album" ng-show="!searchPattern.length && files[files.length - 1].isAlbum" ng-click="openAlbum(false)">
 
 					<i ng-show="!isPlaying" class="material-icons">play_circle_filled</i>
 					<i ng-show="isPlaying" class="material-icons">pause_circle_filled</i>
@@ -62,12 +62,13 @@
 
 				<script type="text/ng-template" id="sub_results.html">
 					<div
-						ng-click="selectFile(file, $index)"
-						ng-class="{playing: isOpen(file, $index)}"
+						ng-click="openFile(file, $index, false)"
+						ng-class="{playing: !file.isDir && isOpen (file.path)}"
 						class="clickable files">
 
 						<i ng-show="file.isDir && !file.isAlbum" class="material-icons md-18">folder</i>
 						<i ng-show="file.isAlbum" class="material-icons md-18">album</i>
+						<i ng-show="!file.isDir" class="material-icons md-18">music_note</i>
  						{{file.name}}
 					</div>
 					<div
@@ -78,26 +79,31 @@
 				</script>
 
 			</div>
-
 		</div>
 
+		<div id="side-info">
 
-		<!-- playlist -->
-		<div ng-show="playlistMode"id="playlist" class="scrollable">
-			<div
-				ng-repeat="file in playlist track by $index"
-				ng-click="playItem ($index)"
-				ng-class="{backlight: $index % 2 === 0, playing: isOpen ($index)}"
-				class="files">
-				{{file.viewName}}
+			<div id="nav-btn">
+				<div id="playlist-btn" ng-click="togglePlaylist()">Playlist</div>
+				<div id="lyrics-btn" ng-click="toggleLyrics()">Lyrics</div>
+			</div>
+
+
+			<!-- playlist -->
+			<div ng-show="showPlaylist" id="playlist" class="scrollable">
+				<div ng-repeat="file in playlist track by $index"
+					 ng-click="playItem ($index)"
+					 ng-class="{backlight: $index % 2 === 0, playing: !isDir && isOpen (file.path)}"
+					 class="files">
+					{{file.name}}
+				</div>
+			</div>
+
+			<!-- lyrics -->
+			<div ng-show="showLyrics" id="lyrics" class="scrollable">
+				<div ng-bind-html="lyrics"></div>
 			</div>
 		</div>
-
-		<!-- lyrics -->
-		<div id="lyrics" class="scrollable">
-			<div ng-bind-html="lyrics"></div>
-		</div>
-
 
 		<!-- player -->
 		<div id="player">

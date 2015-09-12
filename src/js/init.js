@@ -30,14 +30,13 @@ function responsive () {
 	var fileExpHeight = windowHeight - playerHeight;
 	document.getElementById('file-explorer').style.height = "" + fileExpHeight + "px";
 
-	document.getElementById('lyrics').style.height = "" + fileExpHeight + "px";
+	document.getElementById('side-info').style.height = "" + fileExpHeight + "px";
 
 	// album info have the good size
 	var fileBarHeight = document.getElementById('album-info').offsetHeight;
 
 	var filesHeight = fileExpHeight - fileBarHeight;
 	document.getElementById('files').style.height = "" + filesHeight + "px";
-
 }
 
 

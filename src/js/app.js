@@ -28,13 +28,11 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	$scope.prev = function () {
 
 		vlc.playlist.prev ();
-		// document.getElementById('prog-lvl').style.width = "0%";
 		$scope.isPlaying = true;
 	};
 	$scope.next = function () {
 
 		vlc.playlist.next ();
-		// document.getElementById('prog-lvl').style.width = "0%";
 		$scope.isPlaying = true;
 	};
 
@@ -81,7 +79,6 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 		volBar.removeEventListener ('mousemove', refreshVol);
 		$scope.isVolumeChanging = false;
 	});
-
 	function refreshVol (e) {
 
 		var volBar = document.getElementById('vol-bar');
@@ -117,15 +114,28 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 
 	$scope.playlist = [];
 
-	$scope.playlistMode = false;
+	$scope.showPlaylist = false;
+	$scope.togglePlaylist = function () {
+		$scope.showLyrics = false;
+		$scope.showPlaylist = true;
+	};
 
 	// check if playlist item is open
 	// play the clicked playlist item
 	$scope.playItem = function (index) {
 
-		$scope.isPlaying = true;
 		vlc.playlist.playItem (index);
-		document.getElementById('prog-lvl').style.width = "0%";
+		$scope.isPlaying = true;
+	};
+
+	//
+	// LYRICS
+	//
+
+	$scope.showLyrics = false;
+	$scope.toggleLyrics = function () {
+		$scope.showLyrics = false;
+		$scope.showLyrics = true;
 	};
 
 
@@ -139,7 +149,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	$scope.searchPattern = "";
 
 	// play album
-	$scope.playAlbum = function () {
+	$scope.openAlbum = function (toPlay) {
 
 		if ($scope.isPlaying || $scope.playingAlbum === $scope.files[$scope.files.length - 1].path) {
 
@@ -149,21 +159,27 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 
 			$scope.playingAlbum = $scope.files[$scope.files.length - 1].path;
 
-			vlc.playlist.clear ();
+			var isFirst = toPlay;
 			angular.forEach ($scope.files[$scope.files.length - 1].subs, function (file) {
 
 				if (!file.isDir) {
 
 					vlc.playlist.add ('file://' + file.path);
+					$scope.playlist.push (file);
+
+					if (isFirst) {
+
+						isFirst = false;
+						vlc.playlist.playItem (vlc.playlist.items.count - 1);
+						$scope.isPlaying = true;
+					}
 				}
 			});
-			vlc.playlist.play ();
-			$scope.isPlaying = true;
 		}
 	};
 
 	// select a file, an album, or a directory
-	$scope.selectFile = function (file, index) {
+	$scope.openFile = function (file, index, toPlay) {
 
 		if (file.isDir) {
 
@@ -174,7 +190,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 		} else {
 
 			// file is already opened
-			if ($scope.isOpen (file, index)) {
+			if ($scope.isOpen (file.path)) {
 
 				$scope.togglePause ();
 
@@ -183,27 +199,31 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 				// open from search
 				if ($scope.searchPattern.length) {
 
-					vlc.playlist.clear ();
 					vlc.playlist.add ('file://' + file.path);
-					vlc.playlist.play ();
-					$scope.isPlaying = true;
+					$scope.playlist.push (file);
+
+					if (toPlay) {
+						vlc.playlist.playItem (vlc.playlist.items.count - 1);
+						$scope.isPlaying = true;
+					}
 
 				// album is already opened
 				} else if ($scope.playingAlbum === $scope.files[$scope.files.length - 1].path) {
 
-					vlc.playlist.playItem (index);
+					var tmpIndex = vlc.playlist.items.count - 1 + index - $scope.playingAlbum.length;
+					vlc.playlist.playItem (tmpIndex);
 					$scope.isPlaying = true;
 
 				} else {
 
 					$scope.playingAlbum = $scope.files[$scope.files.length - 1].path;
 
-					vlc.playlist.clear ();
 					angular.forEach ($scope.files[$scope.files.length - 1].subs, function (tmpFile) {
 
 						if (!tmpFile.isDir) {
 
 							vlc.playlist.add ('file://' + tmpFile.path);
+							$scope.playlist.push (file);
 
 							if (file.name === tmpFile.name) {
 
@@ -229,13 +249,13 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	};
 
 	// check if file is open
-	$scope.isOpen = function (file, index) {
+	$scope.isOpen = function (filePath) {
 
-		return (
-			$scope.playingAlbum === $scope.files[$scope.files.length - 1].path &&
-				!file.isDir &&
-				index === vlc.playlist.currentItem
-		);
+		if (!vlc.playlist.itemCount) {
+			return false;
+		}
+
+		return ('file://' + filePath) === vlc.playlist.items[vlc.playlist.currentItem].mrl;
 	};
 
 	// back in the file three
