@@ -18,10 +18,9 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	// togglePause
 	$scope.togglePause = function () {
 
-		if (vlc.playlist.itemCount > 0) {
+		if (vlc.playlist.items.count) {
 
 			$scope.isPlaying = !$scope.isPlaying;
-
 			vlc.playlist.togglePause ();
 		}
 	};
@@ -115,6 +114,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	$scope.playlist = [];
 
 	$scope.showPlaylist = false;
+
 	$scope.togglePlaylist = function () {
 		$scope.showLyrics = false;
 		$scope.showPlaylist = true;
@@ -133,6 +133,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	//
 
 	$scope.showLyrics = false;
+
 	$scope.toggleLyrics = function () {
 		$scope.showLyrics = false;
 		$scope.showLyrics = true;
@@ -210,7 +211,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 				// album is already opened
 				} else if ($scope.playingAlbum === $scope.files[$scope.files.length - 1].path) {
 
-					var tmpIndex = vlc.playlist.items.count - 1 + index - $scope.playingAlbum.length;
+					var tmpIndex = vlc.playlist.items.count - 1 + index - $scope.files[$scope.files.length - 1].subs.length;
 					vlc.playlist.playItem (tmpIndex);
 					$scope.isPlaying = true;
 
@@ -251,10 +252,9 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	// check if file is open
 	$scope.isOpen = function (filePath) {
 
-		if (!vlc.playlist.itemCount) {
+		if (!vlc.playlist.items.count) {
 			return false;
 		}
-
 		return ('file://' + filePath) === vlc.playlist.items[vlc.playlist.currentItem].mrl;
 	};
 
@@ -267,20 +267,32 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 		}
 	};
 
-
 	// initial read
-	$scope.loadingFiles = true;
+
+	var libPath = "";
+
+	var dialog = document.getElementById("file-dialog");
+	dialog.addEventListener ("change", function (e) {
+		libPath = this.value;
+		$scope.refreshLib();
+	}, false);
+
+	$scope.loadingFiles = false;
+
+	$scope.chooseLib = function () {
+		dialog.click ();
+	};
+
 	$scope.refreshLib = function () {
 
 		$scope.loadingFiles = true;
-		scanLib ('/home/lapin/Data/Music/Local', function (result) {
+		scanLib (libPath, function (result) {
 
 			$scope.files = [];
 			$scope.files.push (result);
 			$scope.loadingFiles = false;
 		});
 	};
-	$scope.refreshLib();
 }]);
 
 

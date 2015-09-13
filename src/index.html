@@ -14,7 +14,7 @@
 		<div id="file-explorer">
 
 			<!-- input to popup file dialog -->
-			<input style="display:none;" type="file" nwdirectory/>
+			<input id="file-dialog" style="display:none;" type="file" nwdirectory/>
 
 			<!-- loading files animation -->
 			<div id="loading-files" ng-show="loadingFiles">
@@ -25,8 +25,11 @@
 			<div ng-hide="loadingFiles" id="file-bar">
 
 				<!-- change library (or refresh) (or -->
-				<div id="refresh-lib" ng-show="files.length === 1" ng-click="refreshLib()">
-					<i class="material-icons">autorenew</i>
+				<!-- <div id="refresh&#45;lib" ng&#45;show="files.length === 1" ng&#45;click="refreshLib()"> -->
+				<!-- 	<i class="material&#45;icons">autorenew</i> -->
+				<!-- </div> -->
+				<div id="refresh-lib" ng-click="chooseLib()">
+					<i class="material-icons">music_lib</i>
 				</div>
 
 				<!-- up a dir -->

@@ -173,6 +173,9 @@ body {
 	display: inline-block;
 	padding: 2%;
 }
+#playlist, #lyrics {
+	height: 100%;
+}
 #playlist-btn {
 	color: #99cc99;
 }
