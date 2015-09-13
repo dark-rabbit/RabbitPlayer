@@ -223,7 +223,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 						if (!tmpFile.isDir) {
 
 							vlc.playlist.add ('file://' + tmpFile.path);
-							$scope.playlist.push (file);
+							$scope.playlist.push (tmpFile);
 
 							if (file.name === tmpFile.name) {
 

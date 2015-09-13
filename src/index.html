@@ -45,7 +45,8 @@
 				<!-- play album -->
 				<div id="play-album" ng-show="!searchPattern.length && files[files.length - 1].isAlbum" ng-click="openAlbum(false)">
 
-					<i ng-show="!isPlaying" class="material-icons">play_circle_filled</i>
+					<!-- <i ng&#45;show="!isPlaying" class="material&#45;icons">play_circle_filled</i> -->
+					<i ng-show="!isPlaying" class="material-icons">playlist_add</i>
 					<i ng-show="isPlaying" class="material-icons">pause_circle_filled</i>
 					<i ng-show="playlistMode" class="material-icons">playlist</i>
 				</div>
