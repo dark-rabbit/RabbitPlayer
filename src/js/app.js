@@ -113,7 +113,7 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 
 	$scope.playlist = [];
 
-	$scope.showPlaylist = false;
+	$scope.showPlaylist = true;
 
 	$scope.togglePlaylist = function () {
 		$scope.showLyrics = false;
@@ -135,7 +135,31 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 	$scope.showLyrics = false;
 
 	$scope.toggleLyrics = function () {
-		$scope.showLyrics = false;
+
+
+		var tmpPath = vlc.playlist.items[vlc.playlist.currentItem].mrl;
+
+		if (tmpPath) {
+
+			var toRemove = "file://";
+			tmpPath = tmpPath.slice (toRemove.length);
+
+			// get the lyrics
+			mm (fs.createReadStream (tmpPath), function  (err, tags) {
+
+				getLyrics (tags.artist[0], tags.title, function (res) {
+
+					$scope.lyrics = res;
+					document.getElementById('lyrics').scrollTop = 0;
+				});
+			});
+
+		} else {
+			$scope.lyrics = "No file opened";
+			document.getElementById('lyrics').scrollTop = 0;
+		}
+
+		$scope.showPlaylist = false;
 		$scope.showLyrics = true;
 	};
 
@@ -217,33 +241,31 @@ app.controller('appCtrl', ['$scope', '$interval', function ($scope, $interval) {
 
 				} else {
 
-					$scope.playingAlbum = $scope.files[$scope.files.length - 1].path;
+					if (toPlay) {
 
-					angular.forEach ($scope.files[$scope.files.length - 1].subs, function (tmpFile) {
+						$scope.playingAlbum = $scope.files[$scope.files.length - 1].path;
 
-						if (!tmpFile.isDir) {
+						angular.forEach ($scope.files[$scope.files.length - 1].subs, function (tmpFile) {
 
-							vlc.playlist.add ('file://' + tmpFile.path);
-							$scope.playlist.push (tmpFile);
+							if (!tmpFile.isDir) {
 
-							if (file.name === tmpFile.name) {
+								vlc.playlist.add ('file://' + tmpFile.path);
+								$scope.playlist.push (tmpFile);
 
-								vlc.playlist.playItem (vlc.playlist.itemCount - 1);
-								$scope.isPlaying = true;
+								if (file.name === tmpFile.name) {
+
+									vlc.playlist.playItem (vlc.playlist.itemCount - 1);
+									$scope.isPlaying = true;
+								}
 							}
-						}
-					});
+						});
+
+					} else {
+						
+						vlc.playlist.add ('file://' + file.path);
+						$scope.playlist.push (file);
+					}
 				}
-				// get the lyrics
-				// intégrer le mm à getLyrics, qui ne prendra qu'un param, le path
-				mm (fs.createReadStream (file.path), function  (err, tags) {
-
-					getLyrics (tags.artist[0], tags.title, function (res) {
-
-						$scope.lyrics = res;
-						document.getElementById('lyrics').scrollTop = 0;
-					});
-				});
 
 			}
 		}
