@@ -19,199 +19,191 @@
 		<meta name="viewport" content="initial-scale=1" />
 	</head>
 
-	<body>
+	<body layout="column">
 
-		<!-- main section -->
-		<section layout=row>
+		<!-- files, playlist, lyrics ...  -->
+		<section layout="row" flex>
 
-			<!-- files, playlist, lyrics ...  -->
-			<section layout="column" flex>
+			<!-- file explorer -->
+			<section layout="column" flex="40">
 
-				<!-- file explorer -->
-				<section layout="row" flex>
+				<!-- loading -->
+				<div ng-show="loadingFiles" layout-align="center center" flex>
+					<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+				</div>
 
-					<!-- loading -->
-					<div ng-show="loadingFiles" layout-align="center center" flex>
-						<md-progress-circular md-mode="inderteminate"></md-progress-circular>
+				<!-- navigation bar -->
+				<div ng-hide="loadingFiles" layout="row" flex="10">
+
+					<div class="btn-blue" ng-click="chooseLib()" flex="10">
+						<i class="material-icons">library_music</i>
 					</div>
 
-					<!-- navigation bar -->
-					<md-toobar ng-hide="loadingFiles">
-
-						<md-button class="btn-blue" ng-click="chooseLib()" flex="25">
-							<i class="material-icons">library_music</i>
-						</md-button>
-
-						<!-- up a dir -->
-						<md-button class="btn-blue" ng-show="files.length > 1" ng-click="navBack()" flex="25">
-							<i class="material-icons">arrow_back</i>
-						</md-button>
-
-						<!-- album + info + search -->
-						<md-input-container>
-							<input ng-model="searchPattern" type="text" placeholder="{{files[files.length - 1].name}}" flex>
-						</md-input-container>
-
-						<!-- clear search -->
-						<md-button id="clear-search" ng-show="searchPattern.length" ng-click="searchPattern = ''" flex="25">
-							<i class="material-icons">clear</i>
-						</md-button>
-
-						<!-- play album -->
-						<md-button 
-							ng-show="!searchPattern.length && files[files.length - 1].isAlbum"
-							ng-click="openAlbum(false)"
-							flex="25">
-
-							<i ng-show="!isPlaying" class="material-icons">play_circle_filled</i>
-							<i ng-show="!isPlaying" class="material-icons">playlist_add</i>
-							<i ng-show="isPlaying" class="material-icons">pause_circle_filled</i>
-							<i ng-show="playlistMode" class="material-icons">playlist</i>
-						</md-button>
-
-					</md-toolbar>
-
-					<!-- file list -->
-					<md-content ng-hide="loadingFiles">
-
-						<md-list>
-
-							<md-list-item
-								ng-repeat="file in filteredFiles = (files[files.length - 1].subs | filter:searchPattern) track by $index"
-								ng-class-odd="backlight"
-								ng-include="'sub_results.html'">
-							</md-list-item>
-
-							<script type="text/ng-template" id="sub_results.html">
-								<div
-									ng-click="openFile(file, $index, false)"
-									ng-class="{playing: !file.isDir && isOpen (file.path)}">
-
-									<i ng-show="file.isDir && !file.isAlbum" class="material-icons md-18">folder</i>
-									<i ng-show="file.isAlbum" class="material-icons md-18">album</i>
-									<i ng-show="!file.isDir" class="material-icons md-18">music_note</i>
-									{{file.name}}
-								</div>
-								<md-list-item
-									ng-if="searchPattern.length > 2 && filteredFiles.length < 10"
-									ng-repeat="file in filteredFiles = (file.subs | filter:searchPattern) track by $index"
-									ng-include="'sub_results.html'">
-								</md-list-item>
-							</script>
-
-						</md-list>
-
-					</md-content>
-
-				</section>
-
-
-				<!-- playlist, lyrics ... -->
-				<section>
-
-					<md-tabs layout-align="center">
-
-						<md-tab label="Playlist">
-
-							<md-content>
-								<md-list>
-									<md-list-item ng-repeat="file in playlist track by $index"
-										ng-click="playItem ($index)"
-										ng-class="{playing:isOpen (file.path)}"
-										ng-class-odd="backlight">
-										{{file.name}}
-									</md-list-item>
-								</md-list>
-							</md-content>
-
-						</md-tab>
-
-						<md-tab ng-click="getLyrics()" label="Lyrics">
-
-							<md-content ng-bind-html="Lyrics">
-							</md-content>
-
-						</md-tab>
-
-					</md-tabs>
-
-				</section>
-
-
-				<!-- player -->
-				<section layout="row" flex>
-
-					<div id="prog-bar" ng-click="goTo($event)">
-						<div id="prog-lvl">
-						</div>
+					<!-- up a dir -->
+					<div class="btn-blue" ng-show="files.length > 1" ng-click="navBack()" flex="10">
+						<i class="material-icons">arrow_back</i>
 					</div>
 
+					<!-- album + info + search -->
+					<input ng-model="searchPattern" type="text" placeholder="{{files[files.length - 1].name}}" flex>
+
+					<!-- clear search -->
+					<div id="clear-search" ng-show="searchPattern.length" ng-click="searchPattern = ''" flex="10">
+						<i class="material-icons">clear</i>
+					</div>
+
+					<!-- play album -->
 					<div
-						ng-click="prev()"
-						class="player-btn clickable">
+						ng-show="!searchPattern.length && files[files.length - 1].isAlbum"
+						ng-click="openAlbum(false)"
+						flex="10">
 
-						<i class="material-icons">skip_previous</i>
-					</div>
-
-					<div
-						ng-click="togglePause()"
-						class="player-btn clickable">
-						<i ng-show="isPlaying" class="material-icons">pause</i>
-						<i ng-show="!isPlaying" class="material-icons">play_arrow</i>
-					</div>
-
-					<div
-						ng-click="next()"
-						class="player-btn clickable">
-
-						<i class="material-icons">skip_next</i>
-					</div>
-
-					<!-- gestion du volume -->
-					<div id="vol" ng-mouseleave="showVol = false">
-						<!-- bar de volume -->
-						<div
-							id="vol-bar"
-							ng-mousedown="volTo($event)"
-							ng-show="showVol">
-							<div id="vol-lvl"></div>
-						</div>
-						<!-- bouton de volume -->
-						<div
-							id="vol-btn"
-							ng-mouseover="showVol = true"
-							ng-click="mute(!isMuted)"
-							class="player-btn">
-							<!-- not muted -->
-							<i ng-show="!isMuted" class="material-icons">volume_up</i>
-							<!-- muted -->
-							<i ng-show="isMuted" class="material-icons muted">volume_off</i>
-						</div>
+						<i ng-show="!isPlaying" class="material-icons">play_circle_filled</i>
+						<i ng-show="!isPlaying" class="material-icons">playlist_add</i>
+						<i ng-show="isPlaying" class="material-icons">pause_circle_filled</i>
+						<i ng-show="playlistMode" class="material-icons">playlist</i>
 					</div>
 				</div>
+
+				<!-- file list -->
+				<div ng-hide="loadingFiles" flex>
+
+					<div flex=10
+						ng-repeat="file in filteredFiles = (files[files.length - 1].subs | filter:searchPattern) track by $index"
+						ng-class-odd="'backlight'"
+						ng-include="'sub_results.html'">
+					</div>
+
+					<script type="text/ng-template" id="sub_results.html">
+						<div
+							ng-click="openFile(file, $index, false)"
+							ng-class="{playing: !file.isDir && isOpen (file.path)}">
+
+							<i ng-show="file.isDir && !file.isAlbum" class="material-icons md-18">folder</i>
+							<i ng-show="file.isAlbum" class="material-icons md-18">album</i>
+							<i ng-show="!file.isDir" class="material-icons md-18">music_note</i>
+							{{file.name}}
+						</div>
+						<div
+							ng-if="searchPattern.length > 2 && filteredFiles.length < 10"
+							ng-repeat="file in filteredFiles = (file.subs | filter:searchPattern) track by $index"
+							ng-include="'sub_results.html'">
+						</div>
+					</script>
+
+				</div>
+
+			</section>
+
+
+			<!-- playlist, lyrics ... -->
+			<section flex>
+
+				<md-tabs layout-align="center">
+
+					<md-tab label="Playlist">
+
+						<md-content>
+							<md-list>
+								<md-list-item ng-repeat="file in playlist track by $index"
+									ng-click="playItem ($index)"
+									ng-class="{playing:isOpen (file.path)}"
+									ng-class-odd="backlight">
+									{{file.name}}
+								</md-list-item>
+							</md-list>
+						</md-content>
+
+					</md-tab>
+
+					<md-tab ng-click="getLyrics()" label="Lyrics">
+
+						<md-content ng-bind-html="Lyrics">
+						</md-content>
+
+					</md-tab>
+
+				</md-tabs>
 
 			</section>
 
 		</section>
 
+		<!-- player -->
+		<section layout="row" flex="20">
+
+			<div id="prog-bar" ng-click="goTo($event)">
+				<div id="prog-lvl">
+				</div>
+			</div>
+
+			<div
+				ng-click="prev()"
+				class="player-btn clickable">
+
+				<i class="material-icons">skip_previous</i>
+			</div>
+
+			<div
+				ng-click="togglePause()"
+				class="player-btn clickable">
+				<i ng-show="isPlaying" class="material-icons">pause</i>
+				<i ng-show="!isPlaying" class="material-icons">play_arrow</i>
+			</div>
+
+			<div
+				ng-click="next()"
+				class="player-btn clickable">
+
+				<i class="material-icons">skip_next</i>
+			</div>
+
+			<!-- gestion du volume -->
+			<div id="vol" ng-mouseleave="showVol = false">
+				<!-- bar de volume -->
+				<div
+					id="vol-bar"
+					ng-mousedown="volTo($event)"
+					ng-show="showVol">
+					<div id="vol-lvl"></div>
+				</div>
+				<!-- bouton de volume -->
+				<div
+					id="vol-btn"
+					ng-mouseover="showVol = true"
+					ng-click="mute(!isMuted)"
+					class="player-btn">
+					<!-- not muted -->
+					<i ng-show="!isMuted" class="material-icons">volume_up</i>
+					<!-- muted -->
+					<i ng-show="isMuted" class="material-icons muted">volume_off</i>
+				</div>
+			</div>
+
+		</section>
+
+
 
 		<!-- input to popup file dialog -->
 		<input id="file-dialog" style="display:none;" type="file" nwdirectory/>
 
+		<!-- css preprocessor -->
+		<script src="../bower_components/less/dist/less.min.js"></script>
+
+		<!-- dependencies -->
+		<script src="../bower_components/angular/angular.min.js"></script>
+		<script src="../bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+		<script src="../bower_components/angular-animate/angular-animate.min.js"></script>
+		<script src="../bower_components/angular-aria/angular-aria.min.js"></script>
+		<script src="../bower_components/angular-material/angular-material.min.js"></script>
+
+		<!-- js utilities -->
+		<script src="js/init.js"></script>
+		<script src="js/getLyrics.js"></script>
+
+		<!-- main js file -->
+		<script src="js/app.js"></script>
+
 	</body>
-
-	<!-- css preprocessor -->
-	<script src="../bower_components/less/dist/less.min.js"></script>
-
-	<script src="js/init.js"></script>
-	<script src="js/getLyrics.js"></script>
-
-	<script src="../bower_components/angular/angular.min.js"></script>
-	<script src="../bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-	<script src="../bower_components/angular-animate/angular-animate.min.js"></script>
-	<script src="../bower_components/angular-aria/angular-aria.min.js"></script>
-	<script src="../bower_components/angular-material/angular-material.min.js"></script>
-
-	<script src="js/app.js"></script>
 
 </html>
